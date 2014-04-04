@@ -1,0 +1,19 @@
+name: EasyMaze
+main: org.noisyle.bukkit.easymaze.EasyMaze
+version: 0.1
+
+commands:
+   easymaze:
+      description: This is a demo command.
+      usage: /easymaze width
+      aliases: em
+      
+permissions:
+    easymaze.*:
+        description: Gives access to all easymaze commands
+        default: false
+        children:
+            easymaze.easymaze: false
+    easymaze.easymaze:
+        description: Allows you to generate a maze
+        default: op
