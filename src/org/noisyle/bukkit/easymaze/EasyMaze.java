@@ -6,11 +6,15 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 public class EasyMaze extends JavaPlugin {
 	public void onEnable() {
@@ -38,6 +42,18 @@ public class EasyMaze extends JavaPlugin {
 				Location loc = player.getLocation();
 				
 				generateMaze(loc, d);
+
+			}
+			return true;
+		}else if (cmd.getName().equalsIgnoreCase("easyhouse")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("This command can only be run by a player.");
+			} else {
+				Player player = (Player) sender;
+				getLogger().info("输入命令easyhouse");
+				Location loc = player.getLocation();
+				
+				generateHouse(loc);
 
 			}
 			return true;
@@ -78,6 +94,59 @@ public class EasyMaze extends JavaPlugin {
 		for(Block b: torchList){
 			b.setType(Material.TORCH);
 			b.getState().update();
+		}
+	}
+	
+	private void generateHouse(Location loc) {
+		try {
+			World world = loc.getWorld();
+			int x = loc.getBlockX();
+			int z = loc.getBlockZ();
+			int y = loc.getBlockY();
+			List<Block> otherList = new LinkedList<Block>();
+
+			JSONObject easyhouse = HouseGenerator.getHouse();
+			JSONArray data = (JSONArray) easyhouse.get("data");
+			for (int ty = 0; ty < data.size(); ty++) {
+				JSONArray floor = (JSONArray) data.get(ty);
+				for (int tx = 0; tx < floor.size(); tx++) {
+					JSONArray line = (JSONArray) floor.get(tx);
+					for (int tz = 0; tz < line.size(); tz++) {
+						Long node = (Long) line.get(tz);
+						Block b = world.getBlockAt(x-floor.size()/2+tx, y-1+ty, z-line.size()/2+tz);
+						if(node==1){
+							b.setType(Material.STONE);
+						}else if(node==3){
+							b.setType(Material.GLASS);
+						}else{
+							b.setType(Material.AIR);
+						}
+					}
+				}
+			}
+			for (int ty = 0; ty < data.size(); ty++) {
+				JSONArray floor = (JSONArray) data.get(ty);
+				for (int tx = 0; tx < floor.size(); tx++) {
+					JSONArray line = (JSONArray) floor.get(tx);
+					for (int tz = 0; tz < line.size(); tz++) {
+						Long node = (Long) line.get(tz);
+						Block b = world.getBlockAt(x-floor.size()/2+tx, y-1+ty, z-line.size()/2+tz);
+						if(node==2){
+							b.setType(Material.TORCH);
+						}else if(node==4){
+							Block top = b.getRelative(BlockFace.UP, 1);
+							top.setData((byte)0x1000);
+							top.setType(Material.WOODEN_DOOR);
+							top.getState().update();
+							b.setData((byte)0x0000);
+							b.setType(Material.WOODEN_DOOR);
+						}
+						b.getState().update();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

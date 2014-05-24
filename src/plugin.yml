@@ -7,6 +7,10 @@ commands:
       description: This is a demo command.
       usage: /easymaze width
       aliases: em
+   easyhouse:
+      description: This is a demo command.
+      usage: /easyhouse
+      aliases: eh
       
 permissions:
     easymaze.*:
@@ -15,5 +19,8 @@ permissions:
         children:
             easymaze.easymaze: false
     easymaze.easymaze:
+        description: Allows you to generate a maze
+        default: op
+    easymaze.easyhouse:
         description: Allows you to generate a maze
         default: op

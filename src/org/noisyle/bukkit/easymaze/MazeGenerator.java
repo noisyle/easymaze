@@ -80,17 +80,10 @@ public class MazeGenerator {
 		
 		List<Node> branch = new LinkedList<Node>();
 		Random r = new Random(new Date().getTime());
-		Node node = null;
-		for(int i=0;i<seed;i++){
-			int sx=(2*r.nextInt(d)+1),sy=(2*r.nextInt(d)+1);
-			if(nodes.containsKey(sx+":"+sy)){
-				node = nodes.get(sx+":"+sy);//随机起点
-				branch.add(node);
-				nodes.remove(node.x+":"+node.y);
-			}else{
-				i--;
-			}
-		}
+		int sx=(2*r.nextInt(d)+1),sy=(2*r.nextInt(d)+1);
+		Node node = nodes.get(sx+":"+sy);//随机起点
+		branch.add(node);
+		nodes.remove(node.x+":"+node.y);
 		do{
 			if(branch.isEmpty()){
 				List<Node> l = new ArrayList<Node>(nodes.values());
@@ -109,6 +102,7 @@ public class MazeGenerator {
 					if(n.y<width-2 && nodes.containsKey(n.x+":"+(n.y+2))) l.add(maze[n.y+2][n.x]);
 					
 					for(Node ne : l){
+						if(new_branch.size()>=seed) break;
 						maze[(n.y+ne.y)/2][(n.x+ne.x)/2].wall = false;
 						nodes.remove(ne.x+":"+ne.y);
 						new_branch.add(ne);
@@ -183,24 +177,24 @@ public class MazeGenerator {
 	}
 	
 	public static void main(String[] args) {
-//		Date time1 = new Date();
-//		Node[][] maze1 = MazeGenerator.getMazeDFS(200);
-//		System.out.println("耗时："+(new Date().getTime() - time1.getTime())+"毫秒");
-//		printMaze(maze1);
+		Date time1 = new Date();
+		Node[][] maze1 = MazeGenerator.getMazeDFS(20);
+		System.out.println("耗时："+(new Date().getTime() - time1.getTime())+"毫秒");
+		printMaze(maze1);
 
-//		Date time2 = new Date();
-//		Node[][] maze2 = MazeGenerator.getMazeBFS(200, 5);
-//		System.out.println("耗时："+(new Date().getTime() - time2.getTime())+"毫秒");
-//		printMaze(maze2);
+		Date time2 = new Date();
+		Node[][] maze2 = MazeGenerator.getMazeBFS(20, 5);
+		System.out.println("耗时："+(new Date().getTime() - time2.getTime())+"毫秒");
+		printMaze(maze2);
 		
-		Node[][] maze3 = MazeGenerator.getMaze111(4);
-		printMaze(maze3);
+//		Node[][] maze3 = MazeGenerator.getMaze111(4);
+//		printMaze(maze3);
 	}
 	
 	private static void printMaze(Node[][] maze){
 		for(Node[] row : maze){
 			for(Node node : row){
-				if(node.wall) System.out.print("* ");
+				if(node.wall) System.out.print("○");
 				else System.out.print("  ");
 			}
 			System.out.println();
