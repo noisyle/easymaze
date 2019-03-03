@@ -1,0 +1,20 @@
+name: EasyMaze
+main: com.noisyle.bukkit.easymaze.EasyMaze
+version: 1.0
+api-version: 1.13
+
+commands:
+   easymaze:
+      description: This is a demo command.
+      usage: /easymaze width
+      aliases: em
+      
+permissions:
+    easymaze.*:
+        description: Gives access to all easymaze commands
+        default: false
+        children:
+            easymaze.easymaze: false
+    easymaze.easymaze:
+        description: Allows to generate a maze
+        default: op
